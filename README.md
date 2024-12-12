@@ -64,7 +64,7 @@ TODO
     <td align="center">
       <img src="https://github.com/plassasseigne.png" width="100" height="100"><br>
       <strong>Paul Lassasseigne</strong><br>
-      <a href="https://github.com/votreprofil">Votre Profil GitHub</a>
+      <a href="https://github.com/plassasseigne">Profil GitHub</a>
     </td>
     <td align="center">
       <img src="https://github.com/no-penpen.png" width="100" height="100"><br>
