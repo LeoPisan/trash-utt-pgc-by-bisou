@@ -16,6 +16,9 @@ Ce projet est un utilitaire en ligne de commande (CLI) permettant de gérer les 
     - Génère un fichier `.csv` listant les salles triées par capacité d’accueil décroissante ou par taux d'occupation.
 5. **Vérification des disponibilités d’une salle :**
     - Possibilité de consulter les créneaux disponibles d’une salle pour organiser des réunions ou travaux de groupe.
+6. **Import de fichiers cru en mémoire :**
+    - Importe un fichier `.cru` valide avec une vérification des horaires.
+    ⚠️ Le logiciel ne garde actuellement pas en mémoire les fichiers `.cru` importés. ⚠️
 
 ---
 
@@ -46,12 +49,6 @@ npm install
 ```bash
 node index.js
 ```
-
----
-
-## Commandes
-
-TODO
 
 ---
 
