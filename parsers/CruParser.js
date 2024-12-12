@@ -99,26 +99,38 @@ class CruParser {
 
     /**
      * Retrieves the rooms available for a given time slot.
-     * @param {string} hours - Time range in "HH:MM-HH:MM" format.
+     * @param {string} hours - Time range in "D HH:MM-HH:MM" format.
      * @returns {string[]} List of available rooms.
      */
-    availableRooms(hours) {
-        const [start, end] = hours.split("-");
-        const availableRooms = new Set();
+    availableRooms(dayAndHours) {
+        const [day, hours] = dayAndHours.split(" ");
+        const [start, end] = hours.split("-").map((time) => {
+            const [hour, minute] = time.split(":").map(Number);
+            return hour * 60 + minute;
+        });
+
+        const occupiedRooms = new Set();
 
         this.parsedData.forEach((edt) => {
             edt.sessions.forEach((session) => {
-                const [sessionStart, sessionEnd] = session.time.split("-");
-                if (
-                    (end <= sessionStart || start >= sessionEnd) &&
-                    session.capacity !== "0"
-                ) {
-                    availableRooms.add(session.room);
+                const [sessionDay, sessionHours] = session.time.split(" ");
+                const [sessionStart, sessionEnd] = sessionHours.split("-").map((time) => {
+                    const [hour, minute] = time.split(":").map(Number);
+                    return hour * 60 + minute;
+                });
+
+                if (sessionDay === day && !(end <= sessionStart || start >= sessionEnd)) {
+                    occupiedRooms.add(session.room);
                 }
             });
         });
 
-        return Array.from(availableRooms);
+        const allRooms = new Set(
+            this.parsedData.flatMap((edt) => edt.sessions.map((session) => session.room))
+        );
+
+        const availableRooms = Array.from(allRooms).filter((room) => !occupiedRooms.has(room));
+        return availableRooms;
     }
 
     /**

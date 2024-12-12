@@ -4,10 +4,10 @@ function getRoom(cli) {
     cli
     .command("getroom", "Gives the rooms associated with a course or a time slot.")
     .option("--class <class>", "The course that we want to know the rooms.")
-    .option("--hours <hours>", "The time slot to check for available rooms.")
+    .option("--hours <hours>", "The time slot to check for available rooms in D HH:MM-HH:MM format.")
     .action(({ options, logger }) => {
         if (Object.keys(options).length === 2) {
-            return logger.error(`Please choose either a <class> or a <hours>.`);
+            return logger.error("Please choose either a <class> or a <hours>.");
         } else if (options.class !== undefined) {
             try {
                 const course = options.class.toUpperCase();
@@ -28,18 +28,17 @@ function getRoom(cli) {
                 logger.error(error.message);
             }
         } else if (options.hours !== undefined) {
+            const hoursRegex = /^(L|MA|ME|J|V|S|D) \d{1,2}:\d{2}-\d{1,2}:\d{2}$/;
+            const hours = options.hours;
+
+            if (!hoursRegex.test(hours)) {
+                return logger.error("SRUPC_2_E1: Invalid time slot format. Expected format: D HH:MM-HH:MM");
+            }
+
             try {
-                const hours = options.hours;
                 const dataDir = "data";
                 const parser = parseCruFilesInDirectory(dataDir);
-                const hoursRegex = /^\d{1,2}:\d{2}-\d{1,2}:\d{2}$/;
                 const availableRooms = parser.availableRooms(hours);
-
-                if (!hoursRegex.test(hours)) {
-                    return logger.error(
-                        "SRUPC_2_E1: Invalid time slot format. Expected format: HH:MM-HH:MM"
-                    );
-                }
 
                 if (availableRooms.length === 0) {
                     logger.info("No available rooms found for the given time slot.");
