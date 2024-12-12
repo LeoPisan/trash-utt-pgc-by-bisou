@@ -17,7 +17,7 @@ function iCalendar(cli) {
         const endDate = new Date(args.end);
 
         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
-            return logger.error("Invalid date range. Ensure dates are in YYYY-MM-DD format and start is before end.");
+            return logger.error("SRUPC_4_E2: Invalid date range. Ensure dates are in YYYY-MM-DD format and start is before end.");
         }
 
         const courseList = courses.split(",").map((course) => course.trim().toUpperCase());
@@ -67,7 +67,7 @@ function iCalendar(cli) {
             });
 
             if (events.length === 0) {
-                return logger.info("No events found for the specified courses and date range.");
+                return logger.info("SRUPC_4_E1: No courses found for the specified date range.");
             }
 
             createEvents(events, (error, value) => {
@@ -78,8 +78,11 @@ function iCalendar(cli) {
                 let filePath;
                 const fileName = "icalendar-" + Date.now() + ".ics";
 
-                if (options.output !== undefined) {
-                    filePath = (options.output.slice(-1) === "/" ? options.output : options.output + "/") + fileName;
+                if (output !== undefined) {
+                    if (!existsSync(`${output}`)) {
+                        return logger.error("SRUPC_4_E3: The specified output is incorrect. Please use a valid path.");
+                    }
+                    filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
                 } else {
                     if (!existsSync("./icalendar/")) {
                         mkdirSync("./icalendar/");
