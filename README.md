@@ -56,7 +56,7 @@ TODO
 
 ## Auteurs
 
-<h3 align="center">L'équipe Trash'UTT</h3>
+<h3>L'équipe Trash'UTT</h3>
 
 <table>
   <tr>
