@@ -2,7 +2,7 @@ const { parseCruFilesInDirectory } = require("../utils/cruUtils");
 
 function availableRoom(cli) {
     cli
-        .command("availableRoom", "Check the availability of a room.")
+        .command("availability", "Check the availability of a room.")
         .argument("<room>", "The name of the room to check availability for.")
         .action(({ args, logger }) => {
             try {
