@@ -12,8 +12,8 @@ Ce projet est un utilitaire en ligne de commande (CLI) permettant de gérer les 
     - Affiche les salles disponibles pour une plage horaire donnée ou les salles associées à un cours.
 3. **Génération de fichiers iCalendar :**
     - Crée des fichiers `.ics` pour intégrer les cours dans un agenda.
-4. **Classement des salles par capacité d’accueil :**
-    - Génère un fichier `.csv` listant les salles triées par capacité d’accueil décroissante.
+4. **Classement des salles par capacité d’accueil ou par taux d'occupation :**
+    - Génère un fichier `.csv` listant les salles triées par capacité d’accueil décroissante ou par taux d'occupation.
 5. **Vérification des disponibilités d’une salle :**
     - Possibilité de consulter les créneaux disponibles d’une salle pour organiser des réunions ou travaux de groupe.
 
