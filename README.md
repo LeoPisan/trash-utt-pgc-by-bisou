@@ -24,6 +24,7 @@ Ce projet est un utilitaire en ligne de commande (CLI) permettant de gérer les 
 - **Node.js** : version 14+ recommandée
 - **npm** : installé avec Node.js
 - **Dépendances** :
+    - [caporal](https://caporal.io/)
     - [ics](https://www.npmjs.com/package/ics)
     - [csv-writer](https://www.npmjs.com/package/csv-writer)
 
