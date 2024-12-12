@@ -1,0 +1,28 @@
+EDT.CRU - Test
+V�rifier ce qui se passe en cas de s�ance li�e avec salles multiples :
+Comportement souhait� : Si 2 seances li�e avec deux salles chacunes
+Seance 1 : salle 1 et 2 - Seance 2 : salle 3 et 4
+on doit avoir :
++UVUV
+Seance 1 S=1 / Seance 2 S=3
+Seance 1 S=2 / Seance2 S=4
++AP03
+1,D1,P=25,H=V 9:00-12:00,F1,S=B103//
+1,D2,P=24,H=V 13:00-16:00,F1,S=B103//
++BI01
+1,C1,P=25,H=ME 8:00-10:00,F1,S=P101//
+1,D1,P=25,H=ME 10:00-12:00,F1,S=P101//
++BI02
+1,C1,P=25,H=J 8:00-10:00,F1,S=S104//
+1,D1,P=25,H=J 10:00-12:00,F1,S=S104//
+
+Page g�n�r�e en : 1.1899800300598 sec
+
+
+
+
+
+
+
+
+
