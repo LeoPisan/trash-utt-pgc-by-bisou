@@ -1,7 +1,12 @@
-const { program } = require("@caporal/core")
+const cli = require("@caporal/core").default;
 
-program.action(({ logger }) => {
-    logger.info("Hello, world!")
-})
+const commandsLoader = require("./commands");
 
-program.run()
+cli
+.version("cru-parser-cli")
+.version("0.1")
+;
+
+commandsLoader(cli);
+
+cli.run();
