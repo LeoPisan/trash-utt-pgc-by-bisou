@@ -9,7 +9,6 @@ class CruParser {
     constructor(showTokenize = false) {
         this.parsedData = [];
         this.showTokenize = showTokenize;
-        this.errorCount = 0;
     }
 
     /**
@@ -128,8 +127,8 @@ class CruParser {
         const allRooms = new Set(
             this.parsedData.flatMap((edt) => edt.sessions.map((session) => session.room))
         );
-
         const availableRooms = Array.from(allRooms).filter((room) => !occupiedRooms.has(room));
+
         return availableRooms;
     }
 

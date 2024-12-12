@@ -50,7 +50,7 @@ function getRoom(cli) {
                 logger.error(error.message);
             }
         } else if (Object.keys(options).length <= 1) {
-            return logger.error(`Missing required argument. Please choose either a <class> or a <hours>.`);
+            return logger.error("Missing required argument. Please choose either a <class> or a <hours>.");
         }
     })
 }
