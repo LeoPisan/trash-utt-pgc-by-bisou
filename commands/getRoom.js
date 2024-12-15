@@ -17,10 +17,10 @@ function getRoom(cli) {
                 const edt = parser.parsedData.find((edt) => edt.name === course);
 
                 if (!edt) {
-                    return logger.info(`SRUPC_1_E1 : Course ${course} not found.`);
+                    return logger.error(`SRUPC_1_E1: Course ${course} not found.`);
                 }
 
-                logger.info(`${course} informations :`);
+                logger.info(`${course} informations:`);
                 edt.sessions.forEach((session) => {
                     logger.info(`Room: ${session.room}, Capacity: ${session.capacity}`);
                 });
@@ -43,8 +43,8 @@ function getRoom(cli) {
                 if (availableRooms.length === 0) {
                     logger.info("No available rooms found for the given time slot.");
                 } else {
-                    logger.info("Available rooms:");
-                    availableRooms.forEach((room) => logger.info(room));
+                    logger.info(`Available rooms for ${options.hours}:`);
+                    availableRooms.forEach((room) => room!=null ? logger.info(room) : '');
                 }
             } catch (error) {
                 logger.error(error.message);
