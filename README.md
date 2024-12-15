@@ -30,6 +30,7 @@ Ce projet est un utilitaire en ligne de commande (CLI) permettant de gérer les 
     - [caporal](https://caporal.io/)
     - [ics](https://www.npmjs.com/package/ics)
     - [csv-writer](https://www.npmjs.com/package/csv-writer)
+    - [colors](https://www.npmjs.com/package/colors)
 
 ---
 
