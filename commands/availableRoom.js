@@ -11,7 +11,7 @@ function availableRoom(cli) {
             const roomRegex = /^[A-Z]{1}\d{3}|EXT\d+$/;
 
             if (!roomRegex.test(room)) {
-                return logger.error("SRUPC_3_E1: Invalid room format. Expected format: ABC123");
+                return logger.error("SRUPC_3_E1: The classroom name provided is invalid. Please verify the input and try again.");
             }
 
             const parser = parseCruFilesInDirectory(dataDir);
