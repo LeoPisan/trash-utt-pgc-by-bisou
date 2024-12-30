@@ -98,7 +98,7 @@ class CruParser {
             return null;
         }
 
-        if (!/^H=(L|MA|ME|J|V|S|D) \d{2}:\d{2}-\d{2}:\d{2}$/.test(part4)) {
+        if (!/^H=(L|MA|ME|J|V|S|D) \d{1,2}:\d{2}-\d{1,2}:\d{2}$/.test(part4)) {
             this.errMsg("Invalid format for time", part4);
             return null;
         }
@@ -107,7 +107,6 @@ class CruParser {
             this.errMsg("Invalid format for subgroup", part5);
             return null;
         }
-
         if (!/^S=[A-Z]\d{3}\/\/$/.test(part6)) {
             this.errMsg("Invalid format for room", part6);
             return null;
