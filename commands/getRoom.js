@@ -11,6 +11,10 @@ function getRoom(cli) {
             return logger.error(colorInfo("Please choose either a" + " <class> ".bold + "or a" + " <hours>".bold + ".", "yellow"));
         } else if (options.class !== undefined) {
             try {
+                if (options.class === true){
+                    return logger.error(colorInfo('No class has been entered.', "yellow", "SRUPC_1_E3"));
+                }
+
                 const course = options.class.toUpperCase();
                 const dataDir = "data";
                 const directoryPath = getCruDirectoryForCourse(course, dataDir);
