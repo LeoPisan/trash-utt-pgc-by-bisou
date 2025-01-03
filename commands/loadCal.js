@@ -13,6 +13,9 @@ function loadCal(cli) {
     if (!fs.existsSync(filePath)) {
       return logger.error(`SRUPC_5_E1: File not found: ${filePath}. Please target a cru file.`);
     }
+    if (!filePath.endsWith(".cru")) {
+      return logger.error('SRUPC_5_E2: Format error. Please provide a valid .cru file.');
+    }
 
     try {
       const data = fs.readFileSync(filePath, "utf8");
@@ -20,6 +23,9 @@ function loadCal(cli) {
       const parser = new CruParser();
       parser.parse(data);
 
+      if (parser.errorCount > 0) {
+        return logger.error("SRUPC_5_E2: Format error. Please provide a valid .cru file.");
+      }
       if (checkOverlappingSlots(parser.parsedData)) {
         return logger.error("SRUPC_5_E3: Overlapping time slots detected. Please fix the cru file.");
       }
