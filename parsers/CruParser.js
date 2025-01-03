@@ -76,6 +76,8 @@ class CruParser {
      * @param {string} input - Line describing a session.
      * @returns {Session} Session object analyzed.
      */
+
+    //je crois que les formats donnés correspondent pas tout à fait à tous les formats possibles
     parseSession(input) {
         const parts = input.split(",");
         if (parts.length !== 6) {
