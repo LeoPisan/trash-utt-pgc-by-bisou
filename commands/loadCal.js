@@ -55,8 +55,6 @@ function checkOverlappingSlots(calendarData) {
 
   for (const room in sessionsByRoom){
     const sessions = sessionsByRoom[room];
-    console.log(sessions);
-
     const overlap = sessions.some((session, index) => {
       return sessions.some((otherSession, otherIndex) => {
         if (index !== otherIndex) {
