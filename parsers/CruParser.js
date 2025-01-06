@@ -88,7 +88,7 @@ class CruParser {
             return null;
         }
 
-        if (!/^[A-Z0-9]\d$/.test(part2)) {
+        if (!/^[A-Z0-9]\d{1,2}$/.test(part2)) {
             this.errMsg("Invalid format for sessionType", part2);
             return null;
         }
@@ -103,7 +103,7 @@ class CruParser {
             return null;
         }
 
-        if (!/^[A-Z]\d+$/.test(part5)) {
+        if (!/^([A-Z]\d+|[A-Z]{2})$/.test(part5)) {
             this.errMsg("Invalid format for subgroup", part5);
             return null;
         }
