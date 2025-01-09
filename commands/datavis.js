@@ -1,6 +1,7 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
-const { existsSync, mkdirSync } = require("fs");
+const { existsSync, mkdirSync, readdirSync, unlinkSync } = require("fs");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+const inquirer = require("inquirer");
 
 function datavis(cli) {
     cli
@@ -10,121 +11,166 @@ function datavis(cli) {
     .action(({ args, options, logger }) => {
         const output = options.output;
         const type = args.type;
-        const fileName = (type === "capacity" || "c" ? "datavis-capacity-" + Date.now() + ".csv" : "datavis-occupation-" + Date.now() + ".csv");
+        const fileName = (type === "capacity" || type === "c" ? "datavis-capacity-" + Date.now() + ".csv" : "datavis-occupation-" + Date.now() + ".csv");
         let filePath;
 
         try {
             const dataDir = "data";
             const parser = parseCruFilesInDirectory(dataDir);
 
-            if (type === "capacity" || type === "c") {
-                const roomData = [];
+            const checkAndPromptOverwrite = async (dir, type) => {
+                const files = readdirSync(dir).filter(file => file.includes(`datavis-${type}`));
+                if (files.length > 0) {
+                    const latestFile = files.sort((a, b) => {
+                        const aTime = parseInt(a.split('-').pop().split('.').shift());
+                        const bTime = parseInt(b.split('-').pop().split('.').shift());
+                        return bTime - aTime;
+                    })[0];
 
-                parser.parsedData.forEach((edt) => {
-                    edt.sessions.forEach((session) => {
-                        const room = session.room;
-                        const capacity = session.capacity;
+                    const answers = await inquirer.prompt([
+                        {
+                            type: 'confirm',
+                            name: 'overwrite',
+                            message: `A file named ${latestFile} already exists, it's the latest version. Do you want to overwrite it?`,
+                            default: false
+                        }
+                    ]);
+                    if (answers.overwrite) {
+                        unlinkSync(`${dir}/${latestFile}`);
+                        logger.info(`File ${latestFile} has been overwritten.`);
 
-                        if (room && capacity) {
-                            const existingRoom = roomData.find((r) => r.name === room);
-
-                            if (existingRoom) {
-                                existingRoom.capacity = Math.max(existingRoom.capacity, capacity);
-                            } else {
-                                roomData.push({ name: room, capacity });
+                        const deleteOthers = await inquirer.prompt([
+                            {
+                                type: 'confirm',
+                                name: 'deleteOthers',
+                                message: `Do you want to delete the older versions ?`,
+                                default: false
                             }
+                        ]);
+                        if (deleteOthers.deleteOthers) {
+                            files.forEach(file => {
+                                if (file !== latestFile) {
+                                    unlinkSync(`${dir}/${file}`);
+                                    logger.info(`File ${file} has been deleted.`);
+                                }
+                            });
                         }
-                    });
-                });
+                        return latestFile;
+                    } else {
+                        return fileName;
+                    }
+                }
+                return fileName;
+            };
 
-                roomData.sort((a, b) => b.capacity - a.capacity);
-
+            const getFilePath = async (output, type) => {
                 if (output) {
                     if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_7_E1: The specified output is incorrect. Please use a valid path.");
+                        logger.error("SRUPC_7_E1: The specified output is incorrect. Please use a valid path.");
+                        return null;
                     }
-                    filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
+                    const file = await checkAndPromptOverwrite(output, type);
+                    return (output.slice(-1) === "/" ? output : output + "/") + file;
                 } else {
                     if (!existsSync("./datavis/")) {
                         mkdirSync("./datavis/");
                     }
-                    filePath =  "./datavis/" + fileName;
+                    const file = await checkAndPromptOverwrite("./datavis", type);
+                    return "./datavis/" + file;
                 }
+            };
 
-                const csvWriter = createCsvWriter({
-                    path: filePath,
-                    header: [
-                        { id: "name", title: "Nom de la salle" },
-                        { id: "capacity", title: "Capacité d’accueil" },
-                    ],
-                });
+            const processFile = async () => {
+                filePath = await getFilePath(output, type === "capacity" || type === "c" ? "capacity" : "occupation");
+                if (!filePath) return;
 
-                csvWriter
-                    .writeRecords(roomData)
-                    .then(() => {
-                        logger.info(`CSV file successfully created at ${filePath}.`);
-                    })
-                    .catch((err) => {
-                        logger.error(`Error generating CSV file: ${err.message}.`);
+                if (type === "capacity" || type === "c") {
+                    const roomData = [];
+
+                    parser.parsedData.forEach((edt) => {
+                        edt.sessions.forEach((session) => {
+                            const room = session.room;
+                            const capacity = session.capacity;
+
+                            if (room && capacity) {
+                                const existingRoom = roomData.find((r) => r.name === room);
+
+                                if (existingRoom) {
+                                    existingRoom.capacity = Math.max(existingRoom.capacity, capacity);
+                                } else {
+                                    roomData.push({ name: room, capacity });
+                                }
+                            }
+                        });
                     });
-            } else if (type === "occupation" || type === "o") {
-                const roomOccupancy = {};
 
-                parser.parsedData.forEach((edt) => {
-                    edt.sessions.forEach((session) => {
-                        const room = session.room;
-                        const [day, timeRange] = session.time.split(" ");
-                        const [start, end] = timeRange.split("-");
-                        const duration = parseTimeToMinutes(end) - parseTimeToMinutes(start);
+                    roomData.sort((a, b) => b.capacity - a.capacity);
 
-                        if (!roomOccupancy[room]) {
-                            roomOccupancy[room] = { room, occupiedTime: 0, totalTime: 0 };
-                        }
-
-                        const dayTime = 12 * 60;
-                        roomOccupancy[room].totalTime += dayTime;
-                        roomOccupancy[room].occupiedTime += duration;
+                    const csvWriter = createCsvWriter({
+                        path: filePath,
+                        header: [
+                            { id: "name", title: "Nom de la salle" },
+                            { id: "capacity", title: "Capacité d’accueil" },
+                        ],
                     });
-                });
 
-                const occupancyRates = Object.values(roomOccupancy).map((room) => ({
-                    room: room.room,
-                    occupancyRate: ((room.occupiedTime / room.totalTime) * 100).toFixed(2),
-                }));
+                    csvWriter
+                        .writeRecords(roomData)
+                        .then(() => {
+                            logger.info(`CSV file successfully created at ${filePath}.`);
+                        })
+                        .catch((err) => {
+                            logger.error(`Error generating CSV file: ${err.message}.`);
+                        });
+                } else if (type === "occupation" || type === "o") {
+                    const roomOccupancy = {};
 
-                occupancyRates.sort((a, b) => a.occupancyRate - b.occupancyRate);
+                    parser.parsedData.forEach((edt) => {
+                        edt.sessions.forEach((session) => {
+                            const room = session.room;
+                            const [day, timeRange] = session.time.split(" ");
+                            const [start, end] = timeRange.split("-");
+                            const duration = parseTimeToMinutes(end) - parseTimeToMinutes(start);
 
-                if (output) {
-                    if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_6_E1: The specified output is incorrect. Please use a valid path.");
-                    }
-                    filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
+                            if (!roomOccupancy[room]) {
+                                roomOccupancy[room] = { room, occupiedTime: 0, totalTime: 0 };
+                            }
+
+                            const dayTime = 12 * 60;
+                            roomOccupancy[room].totalTime += dayTime;
+                            roomOccupancy[room].occupiedTime += duration;
+                        });
+                    });
+
+                    const occupancyRates = Object.values(roomOccupancy).map((room) => ({
+                        room: room.room,
+                        occupancyRate: ((room.occupiedTime / room.totalTime) * 100).toFixed(2),
+                    }));
+
+                    occupancyRates.sort((a, b) => a.occupancyRate - b.occupancyRate);
+
+                    const csvWriter = createCsvWriter({
+                        path: filePath,
+                        header: [
+                            { id: "room", title: "Nom de la salle" },
+                            { id: "occupancyRate", title: "Taux d’occupation (%)" },
+                        ],
+                    });
+
+                    csvWriter
+                        .writeRecords(occupancyRates)
+                        .then(() => {
+                            logger.info(`CSV file successfully created at ${filePath}.`);
+                        })
+                        .catch((err) => {
+                            logger.error(`Error generating CSV file: ${err.message}.`);
+                        });
                 } else {
-                    if (!existsSync("./datavis/")) {
-                        mkdirSync("./datavis/");
-                    }
-                    filePath =  "./datavis/" + fileName;
+                    logger.error("Please choose a value between 'occupation' and 'capacity'.");
                 }
+            };
 
-                const csvWriter = createCsvWriter({
-                    path: filePath,
-                    header: [
-                        { id: "room", title: "Nom de la salle" },
-                        { id: "occupancyRate", title: "Taux d’occupation (%)" },
-                    ],
-                });
-
-                csvWriter
-                    .writeRecords(occupancyRates)
-                    .then(() => {
-                        logger.info(`CSV file successfully created at ${filePath}.`);
-                    })
-                    .catch((err) => {
-                        logger.error(`Error generating CSV file: ${err.message}.`);
-                    });
-            } else {
-                logger.error("Please choose a value between 'occupation' and 'capacity'.")
-            }
+            processFile();
         } catch (error) {
             logger.error(error.message);
         }
