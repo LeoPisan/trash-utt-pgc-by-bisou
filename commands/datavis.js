@@ -66,7 +66,8 @@ function datavis(cli) {
             const getFilePath = async (output, type) => {
                 if (output) {
                     if (!existsSync(`${output}`)) {
-                        logger.error("SRUPC_7_E1: The specified output is incorrect. Please use a valid path.");
+                        const errorCode = type === "capacity" || type === "c" ? "SRUPC_7_E1" : "SRUPC_6_E1";
+                        logger.error(`${errorCode}: The specified output is incorrect. Please use a valid path.`);
                         return null;
                     }
                     const file = await checkAndPromptOverwrite(output, type);
