@@ -3,6 +3,10 @@ const CruParser = require("../parsers/CruParser");
 
 let loadedCal = null;
 
+/**
+ * Fournis la commande loadcal permettant de charger un fichier CRU en mémoire
+ * @param cli {Program} - Programme Caporal JS
+ */
 function loadCal(cli) {
   cli
   .command("loadcal", "Load a calendar from a cru file into memory.")

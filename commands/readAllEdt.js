@@ -1,5 +1,9 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
 
+/**
+ * Fournis la commande readAllEdt permettant de lire tous les fichiers au format CRU d'un répertoire
+ * @param cli {Program} Programme Caporal JS
+ */
 function readAllEdt(cli) {
     cli
     .command("readAllEdt", "Read and parse all .cru files from the given directory.")

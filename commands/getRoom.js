@@ -1,6 +1,10 @@
 const { parseCruFilesInDirectory, getCruDirectoryForCourse} = require("../utils/cruUtils");
 const colorInfo = require("../utils/colorInfo");
 
+/**
+ * Fournis la commande "getroom" permettant de donner les salles associées à un cours ou à une plage de temps
+ * @param cli {Program} - Programme Caporal JS
+ */
 function getRoom(cli) {
     cli
     .command("getroom", "Gives the rooms associated with a course or a time slot.")
