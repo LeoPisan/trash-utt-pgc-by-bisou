@@ -1,8 +1,13 @@
 const fs = require("fs");
 const CruParser = require("../parsers/CruParser");
+const colorInfo = require("../utils/colorInfo");
 
 let loadedCal = null;
 
+/**
+ * Fournis la commande loadcal permettant de charger un fichier CRU en mémoire
+ * @param cli {Program} - Programme Caporal JS
+ */
 function loadCal(cli) {
   cli
   .command("loadcal", "Load a calendar from a cru file into memory.")
@@ -11,7 +16,10 @@ function loadCal(cli) {
     const filePath = args.filePath || "./data/test.cru";
 
     if (!fs.existsSync(filePath)) {
-      return logger.error(`SRUPC_5_E1: File not found: ${filePath}. Please target a cru file.`);
+      return logger.error(colorInfo(`File not found: ${filePath}. Please target a cru file.`, "yellow", "SRUPC_5_E1"));
+    }
+    if (!filePath.endsWith(".cru")) {
+      return logger.error('SRUPC_5_E2: Format error. Please provide a valid .cru file.');
     }
 
     try {
@@ -24,14 +32,14 @@ function loadCal(cli) {
       }
       
       if (checkOverlappingSlots(parser.parsedData)) {
-        return logger.error("SRUPC_5_E3: Overlapping time slots detected. Please fix the cru file.");
+        return logger.error(colorInfo("Overlapping time slots detected. Please fix the cru file.", "yellow", "SRUPC_5_E3"));
       }
 
       loadedCal = parser.parsedData;
 
       logger.info(`Calendar successfully loaded from ${filePath}.`);
     } catch (error) {
-      logger.error(`SRUPC_5_E2: Error loading calendar: ${error.message}.`);
+      logger.error(colorInfo(`Error loading calendar: ${error.message}.`, "red"));
     }
   });
 }

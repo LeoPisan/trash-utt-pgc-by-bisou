@@ -1,7 +1,12 @@
 const { writeFileSync, mkdirSync, existsSync } = require("fs");
 const { createEvents } = require("ics");
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
+const colorInfo = require("../utils/colorInfo");
 
+/**
+ * Fournis la commande "icalendar" permettant de générer un fichier iCalendar à partir des données chargées en mémoire
+ * @param cli {Program} - Programme Caporal JS
+ */
 function iCalendar(cli) {
     cli
     .command("icalendar", "Allows to generate an icalendar file based on the user's courses.")
@@ -17,13 +22,13 @@ function iCalendar(cli) {
         const endDate = new Date(args.end);
 
         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
-            return logger.error("SRUPC_4_E2: Invalid date range. Ensure dates are in YYYY-MM-DD format and start is before end.");
+            return logger.error(colorInfo("Invalid date range. Ensure dates are in YYYY-MM-DD format and start is before end.", "yellow", "SRUPC_4_E2"));
         }
 
         const courseList = courses.split(",").map((course) => course.trim().toUpperCase());
 
         if (courseList.length === 0) {
-            return logger.error("No courses provided. Provide at least one course.");
+            return logger.error(colorInfo("No courses provided. Provide at least one course.", "yellow"));
         }
 
         try {
@@ -72,7 +77,7 @@ function iCalendar(cli) {
 
             createEvents(events, (error, value) => {
                 if (error) {
-                    return logger.error(`Error generating iCalendar: ${error.message}`);
+                    return logger.error(colorInfo(`Error generating iCalendar: ${error.message}`, "red"));
                 }
 
                 let filePath;
@@ -80,7 +85,7 @@ function iCalendar(cli) {
 
                 if (output !== undefined) {
                     if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_4_E3: The specified output is incorrect. Please use a valid path.");
+                        return logger.error(colorInfo("The specified output is incorrect. Please use a valid path.", "yellow", "SRUPC_4_E3"));
                     }
                     filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
                 } else {
@@ -94,7 +99,7 @@ function iCalendar(cli) {
                 logger.info(`iCalendar file successfully created at ${filePath}`);
             });
         } catch (error) {
-            logger.error(error.message);
+            logger.error(colorInfo(error.message, "red"));
         }
     });
 }

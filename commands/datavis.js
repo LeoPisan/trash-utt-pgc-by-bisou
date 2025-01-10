@@ -1,7 +1,12 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
 const { existsSync, mkdirSync } = require("fs");
+const colorInfo = require("../utils/colorInfo");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
+/**
+ * Fournis une commande "datavis" générant un tableau au format CSV représentant le classement des salles par capacité ou occupation
+ * @param cli {Program} - Programme Caporal JS
+ */
 function datavis(cli) {
     cli
     .command("datavis", "Generates a CSV table which represents the rank of rooms by capacity.")
@@ -41,7 +46,7 @@ function datavis(cli) {
 
                 if (output) {
                     if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_7_E1: The specified output is incorrect. Please use a valid path.");
+                        return logger.error(colorInfo("The specified output is incorrect. Please use a valid path.", "yellow", "SRUPC_7_E1"));
                     }
                     filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
                 } else {
@@ -65,7 +70,7 @@ function datavis(cli) {
                         logger.info(`CSV file successfully created at ${filePath}.`);
                     })
                     .catch((err) => {
-                        logger.error(`Error generating CSV file: ${err.message}.`);
+                        logger.error(colorInfo(`Error generating CSV file: ${err.message}.`, "red"));
                     });
             } else if (type === "occupation" || type === "o") {
                 const roomOccupancy = {};
@@ -96,7 +101,7 @@ function datavis(cli) {
 
                 if (output) {
                     if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_6_E1: The specified output is incorrect. Please use a valid path.");
+                        return logger.error(colorInfo("The specified output is incorrect. Please use a valid path.", "yellow", "SRUPC_6_E1"));
                     }
                     filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
                 } else {
@@ -120,17 +125,22 @@ function datavis(cli) {
                         logger.info(`CSV file successfully created at ${filePath}.`);
                     })
                     .catch((err) => {
-                        logger.error(`Error generating CSV file: ${err.message}.`);
+                        logger.error(colorInfo(`Error generating CSV file: ${err.message}.`, "red"));
                     });
             } else {
-                logger.error("Please choose a value between 'occupation' and 'capacity'.")
+                logger.error(colorInfo("Please choose a value between 'occupation' and 'capacity'.", "yellow"));
             }
         } catch (error) {
-            logger.error(error.message);
+            logger.error(colorInfo(error.message, "red"));
         }
     });
 }
 
+/**
+ * Convertis une information de date en minutes
+ * @param time {string} - Date au format HH:MM
+ * @returns {number} - Nombre de minutes dans la date fournie
+ */
 function parseTimeToMinutes(time) {
     const [hour, minute] = time.split(":").map(Number);
     return hour * 60 + minute;

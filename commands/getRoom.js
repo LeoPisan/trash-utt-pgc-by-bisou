@@ -1,6 +1,10 @@
 const { parseCruFilesInDirectory, getCruDirectoryForCourse} = require("../utils/cruUtils");
 const colorInfo = require("../utils/colorInfo");
 
+/**
+ * Fournis la commande "getroom" permettant de donner les salles associées à un cours ou à une plage de temps
+ * @param cli {Program} - Programme Caporal JS
+ */
 function getRoom(cli) {
     cli
     .command("getroom", "Gives the rooms associated with a course or a time slot.")
@@ -11,6 +15,10 @@ function getRoom(cli) {
             return logger.error(colorInfo("Please choose either a" + " <class> ".bold + "or a" + " <hours>".bold + ".", "yellow"));
         } else if (options.class !== undefined) {
             try {
+                if (options.class === true){
+                    return logger.error(colorInfo('No class has been entered.', "yellow", "SRUPC_1_E3"));
+                }
+
                 const course = options.class.toUpperCase();
                 const dataDir = "data";
                 const directoryPath = getCruDirectoryForCourse(course, dataDir);
