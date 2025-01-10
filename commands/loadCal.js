@@ -24,14 +24,13 @@ function loadCal(cli) {
 
     try {
       const data = fs.readFileSync(filePath, "utf8");
-
       const parser = new CruParser();
       parser.parse(data);
 
       if (parser.errorCount > 0) {
         return logger.error("SRUPC_5_E2: Format error. Please provide a valid .cru file.");
       }
-
+      
       if (checkOverlappingSlots(parser.parsedData)) {
         return logger.error(colorInfo("Overlapping time slots detected. Please fix the cru file.", "yellow", "SRUPC_5_E3"));
       }
@@ -49,6 +48,7 @@ function checkOverlappingSlots(calendarData) {
   const sessionsByRoom = {};
 
   calendarData.forEach((edt) => {
+    const name = edt.name;
     edt.sessions.forEach((session) => {
       const room = session.room;
       const [day, timeRange] = session.time.split(" ");
@@ -57,21 +57,27 @@ function checkOverlappingSlots(calendarData) {
       if (!sessionsByRoom[room]) {
         sessionsByRoom[room] = [];
       }
-
-      const overlaps = sessionsByRoom[room].some((existingSession) => {
-        return (
-          existingSession.day === day &&
-          !(end <= existingSession.start || start >= existingSession.end)
-        );
-      });
-
-      if (overlaps) {
-        return true;
-      }
-
-      sessionsByRoom[room].push({ day, start, end });
+      sessionsByRoom[room].push({ name, day, start, end });
     });
   });
+
+  for (const room in sessionsByRoom){
+    const sessions = sessionsByRoom[room];
+    const overlap = sessions.some((session, index) => {
+      return sessions.some((otherSession, otherIndex) => {
+        if (index !== otherIndex) {
+          return (
+            session.day === otherSession.day &&
+            !(session.end <= otherSession.start || session.start >= otherSession.end)
+          );
+        }
+      })
+  });
+
+  if (overlap){
+    return true;
+  }
+  }
 
   return false;
 }
