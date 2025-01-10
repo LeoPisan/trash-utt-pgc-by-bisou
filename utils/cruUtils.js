@@ -2,12 +2,21 @@ const fs = require("fs");
 const path = require("path");
 const CruParser = require("../parsers/CruParser");
 
+/**
+ * Vérifie l'existence d'un dossier
+ * @param directory {string} - Chemin du dossier
+ */
 function checkDirectoryExists(directory) {
     if (!fs.existsSync(directory)) {
         throw new Error(`The folder ${directory} does not exist.`);
     }
 }
 
+/**
+ * Cherche les chemins des fichiers CRU dans un dossier
+ * @param directory {string} - Chemin du dossier
+ * @returns {string[]} - Chemins des fichiers CRU trouvés
+ */
 function findCruFiles(directory) {
     checkDirectoryExists(directory);
 
@@ -28,6 +37,11 @@ function findCruFiles(directory) {
     return cruFiles;
 }
 
+/**
+ * Parse les fichiers CRU présents dans un dossier
+ * @param directory {string} - Chemin du dossier
+ * @returns {CruParser} - Parser contenant les données parsées
+ */
 function parseCruFilesInDirectory(directory) {
     const files = findCruFiles(directory);
 
@@ -45,6 +59,12 @@ function parseCruFilesInDirectory(directory) {
     return parser;
 }
 
+/**
+ * Cherche le chemin du dossier contenant les fichiers CRU associés à un cours
+ * @param courseName {string} - Nom du cours
+ * @param directory {string} - Chemin du dossier dans lequel la recherche est effectuée
+ * @returns {string} - Chemin du dossier trouvé
+ */
 function getCruDirectoryForCourse(courseName, directory) {
     checkDirectoryExists(directory);
 
@@ -59,11 +79,15 @@ function getCruDirectoryForCourse(courseName, directory) {
         throw new Error(`No folder found for courses starting with '${firstLetter}'`);
     }
 
-    const folderPath = path.join(directory, targetFolder);
-
-    return folderPath;
+    return path.join(directory, targetFolder);
 }
 
+/**
+ * Cherche le premier fichier CRU associé à un cours donné
+ * @param courseName {string} - Nom du cours
+ * @param directory {string} - Chemin du dossier dans lequel la recherche est effectuée
+ * @returns {string} - Chemin du fichier CRU trouvé
+ */
 function getCruFilePathForCourse(courseName, directory) {
     checkDirectoryExists(directory);
 
