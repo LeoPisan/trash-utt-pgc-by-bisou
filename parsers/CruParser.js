@@ -9,6 +9,7 @@ class CruParser {
     constructor(showTokenize = false) {
         this.parsedData = [];
         this.showTokenize = showTokenize;
+        this.errorCount = 0;
     }
 
     /**
@@ -42,6 +43,16 @@ class CruParser {
     }
 
     /**
+     * Error message to display when parsing fails.
+     * @param {string} msg - Error message to display.
+     * @param {string} input - Input data that caused the error.
+     */
+    errMsg(msg, input) {
+        this.errorCount++;
+        console.log("Parsing Error ! on " + input + " -- msg : " + msg);
+    }
+
+    /**
      * ListEdt : Parses the session list and creates EDT objects.
      * @param {string[]} input - List of lines to analyze.
      */
@@ -67,13 +78,47 @@ class CruParser {
      */
     parseSession(input) {
         const parts = input.split(",");
+        if (parts.length !== 6) {
+            this.errMsg("Invalid session format", input);
+            return null;
+        }
+        const [part1, part2, part3, part4, part5, part6] = parts;
+        if (!/^\d$/.test(part1)) {
+            this.errMsg("Invalid format for id", part1);
+            return null;
+        }
+
+        if (!/^[A-Z0-9]\d{1,2}$/.test(part2)) {
+            this.errMsg("Invalid format for sessionType", part2);
+            return null;
+        }
+
+        if (!/^P=\d{1,3}$/.test(part3)) {
+            this.errMsg("Invalid format for capacity", part3);
+            return null;
+        }
+
+        if (!/^H=(L|MA|ME|J|V|S|D) \d{1,2}:\d{2}-\d{1,2}:\d{2}$/.test(part4)) {
+            this.errMsg("Invalid format for time", part4);
+            return null;
+        }
+
+        if (!/^([A-Z]\d+|[A-Z]{2})$/.test(part5)) {
+            this.errMsg("Invalid format for subgroup", part5);
+            return null;
+        }
+        if (!/^S=[A-Z]\d{3}\/\/$/.test(part6) && part6 !== "S=EXT1//") {
+            this.errMsg("Invalid format for room", part6);
+            return null;
+        }
+
         return new Session(
-            parts[0],
-            parts[1],
-            this.extractValue(parts[2]),
-            this.extractValue(parts[3]),
-            parts[4],
-            this.extractRoom(parts[5])
+            part1,
+            part2,
+            this.extractValue(part3),
+            this.extractValue(part4),
+            part5,
+            this.extractValue(part6)
         );
     }
 
@@ -84,16 +129,6 @@ class CruParser {
      */
     extractValue(input) {
         return input.split("=")[1];
-    }
-
-    /**
-     * Extracts the room name from a given string.
-     * @param {string} input - Text containing "S=XXX".
-     * @returns {string|null} Room name or null.
-     */
-    extractRoom(input) {
-        const match = input.match(/S=([A-Z0-9]+)/);
-        return match ? match[1] : null;
     }
 
     /**
