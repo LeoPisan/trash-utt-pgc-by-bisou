@@ -1,5 +1,6 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
 const { existsSync, mkdirSync } = require("fs");
+const colorInfo = require("../utils/colorInfo");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 function datavis(cli) {
@@ -41,7 +42,7 @@ function datavis(cli) {
 
                 if (output) {
                     if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_7_E1: The specified output is incorrect. Please use a valid path.");
+                        return logger.error(colorInfo("The specified output is incorrect. Please use a valid path.", "yellow", "SRUPC_7_E1"));
                     }
                     filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
                 } else {
@@ -65,7 +66,7 @@ function datavis(cli) {
                         logger.info(`CSV file successfully created at ${filePath}.`);
                     })
                     .catch((err) => {
-                        logger.error(`Error generating CSV file: ${err.message}.`);
+                        logger.error(colorInfo(`Error generating CSV file: ${err.message}.`, "red"));
                     });
             } else if (type === "occupation" || type === "o") {
                 const roomOccupancy = {};
@@ -96,7 +97,7 @@ function datavis(cli) {
 
                 if (output) {
                     if (!existsSync(`${output}`)) {
-                        return logger.error("SRUPC_6_E1: The specified output is incorrect. Please use a valid path.");
+                        return logger.error(colorInfo("The specified output is incorrect. Please use a valid path.", "yellow", "SRUPC_6_E1"));
                     }
                     filePath = (output.slice(-1) === "/" ? output : output + "/") + fileName;
                 } else {
@@ -120,13 +121,13 @@ function datavis(cli) {
                         logger.info(`CSV file successfully created at ${filePath}.`);
                     })
                     .catch((err) => {
-                        logger.error(`Error generating CSV file: ${err.message}.`);
+                        logger.error(colorInfo(`Error generating CSV file: ${err.message}.`, "red"));
                     });
             } else {
-                logger.error("Please choose a value between 'occupation' and 'capacity'.")
+                logger.error(colorInfo("Please choose a value between 'occupation' and 'capacity'.", "yellow"));
             }
         } catch (error) {
-            logger.error(error.message);
+            logger.error(colorInfo(error.message, "red"));
         }
     });
 }
