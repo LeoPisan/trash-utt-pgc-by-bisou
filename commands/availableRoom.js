@@ -1,5 +1,10 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
+const colorInfo = require("../utils/colorInfo");
 
+/**
+ * Fournis la commande "availability", permettant d'indiquer les disponibilités d'une salle
+ * @param cli {Program} - Programme Caporal JS
+ */
 function availableRoom(cli) {
     cli
     .command("availability", "Check the availability of a room.")
@@ -11,7 +16,7 @@ function availableRoom(cli) {
             const roomRegex = /^[A-Z]{1}\d{3}|EXT\d+$/;
 
             if (!roomRegex.test(room)) {
-                return logger.error("SRUPC_3_E1: The classroom name provided is invalid. Please verify the input and try again.");
+                return logger.error(colorInfo("The classroom name provided is invalid. Please verify the input and try again.", "yellow", "SRUPC_3_E1"));
             }
 
             const parser = parseCruFilesInDirectory(dataDir);
@@ -29,7 +34,7 @@ function availableRoom(cli) {
                 });
             }
         } catch (error) {
-            logger.error(error.message);
+            logger.error(colorInfo(error.message, "red"));
         }
     });
 }
