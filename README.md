@@ -31,6 +31,7 @@ Ce projet est un utilitaire en ligne de commande (CLI) permettant de gérer les 
     - [ics](https://www.npmjs.com/package/ics)
     - [csv-writer](https://www.npmjs.com/package/csv-writer)
     - [colors](https://www.npmjs.com/package/colors)
+    - [inquirer](https://www.npmjs.com/package/inquirer)
 
 ---
 
@@ -76,3 +77,29 @@ node index.js
     </td>
   </tr>
 </table>
+
+<h3>L'équipe Bisou</h3>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/154017011?v=4" width="100" height="100"><br>
+      <strong>Nathan Honoré</strong><br>
+      <a href="https://github.com/Phirix62">Profil GitHub</a>
+    </td>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/187779461?v=4" width="100" height="100"><br>
+      <strong>Adeline Vercoutre</strong><br>
+      <a href="https://github.com/AdelineVercoutre">Profil GitHub</a>
+    </td>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/92891905?s=400&u=4d2dbcedff76d1d1010e7d5729542b65403653bf&v=4" width="100" height="100"><br>
+      <strong>Elia Gautier</strong><br>
+      <a href="https://github.com/LeoPisan">Profil GitHub</a>
+    </td>
+  </tr>
+</table>
+
+## Licence
+
+Ce logiciel est fournis sous licence [CeCILL-B](./LICENCE.md).
