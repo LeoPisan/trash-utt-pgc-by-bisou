@@ -29,7 +29,7 @@ function loadCal(cli) {
 
       logger.info(`Calendar successfully loaded from ${filePath}.`);
     } catch (error) {
-      logger.error(`SRUPC_5_E2: Error loading calendar: ${error.message}.`); //TODO Ce cas ne couvre pas les erreurs attendues pour le code indiqué (il devrait apparaître dès qu'un chemin invalide est donné en entrée)
+      logger.error(colorInfo(`Error loading calendar: ${error.message}.`, "red"));
     }
   });
 }
