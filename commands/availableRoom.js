@@ -1,6 +1,10 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
 const colorInfo = require("../utils/colorInfo");
 
+/**
+ * Fournis la commande "availability", permettant d'indiquer les disponibilités d'une salle
+ * @param cli {Program} - Programme Caporal JS
+ */
 function availableRoom(cli) {
     cli
     .command("availability", "Check the availability of a room.")

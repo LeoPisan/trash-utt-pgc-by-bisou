@@ -3,6 +3,10 @@ const { createEvents } = require("ics");
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
 const colorInfo = require("../utils/colorInfo");
 
+/**
+ * Fournis la commande "icalendar" permettant de générer un fichier iCalendar à partir des données chargées en mémoire
+ * @param cli {Program} - Programme Caporal JS
+ */
 function iCalendar(cli) {
     cli
     .command("icalendar", "Allows to generate an icalendar file based on the user's courses.")

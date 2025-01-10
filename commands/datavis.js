@@ -3,6 +3,10 @@ const { existsSync, mkdirSync } = require("fs");
 const colorInfo = require("../utils/colorInfo");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
+/**
+ * Fournis une commande "datavis" générant un tableau au format CSV représentant le classement des salles par capacité ou occupation
+ * @param cli {Program} - Programme Caporal JS
+ */
 function datavis(cli) {
     cli
     .command("datavis", "Generates a CSV table which represents the rank of rooms by capacity.")
@@ -132,6 +136,11 @@ function datavis(cli) {
     });
 }
 
+/**
+ * Convertis une information de date en minutes
+ * @param time {string} - Date au format HH:MM
+ * @returns {number} - Nombre de minutes dans la date fournie
+ */
 function parseTimeToMinutes(time) {
     const [hour, minute] = time.split(":").map(Number);
     return hour * 60 + minute;
