@@ -1,5 +1,6 @@
 const fs = require("fs");
 const CruParser = require("../parsers/CruParser");
+const colorInfo = require("../utils/colorInfo");
 
 let loadedCal = null;
 
@@ -11,7 +12,7 @@ function loadCal(cli) {
     const filePath = args.filePath || "./data/test.cru";
 
     if (!fs.existsSync(filePath)) {
-      return logger.error(`SRUPC_5_E1: File not found: ${filePath}. Please target a cru file.`);
+      return logger.error(colorInfo(`File not found: ${filePath}. Please target a cru file.`, "yellow", "SRUPC_5_E1"));
     }
 
     try {
@@ -21,14 +22,14 @@ function loadCal(cli) {
       parser.parse(data);
 
       if (checkOverlappingSlots(parser.parsedData)) {
-        return logger.error("SRUPC_5_E3: Overlapping time slots detected. Please fix the cru file.");
+        return logger.error(colorInfo("Overlapping time slots detected. Please fix the cru file.", "yellow", "SRUPC_5_E3"));
       }
 
       loadedCal = parser.parsedData;
 
       logger.info(`Calendar successfully loaded from ${filePath}.`);
     } catch (error) {
-      logger.error(`SRUPC_5_E2: Error loading calendar: ${error.message}.`);
+      logger.error(`SRUPC_5_E2: Error loading calendar: ${error.message}.`); //TODO Ce cas ne couvre pas les erreurs attendues pour le code indiqué (il devrait apparaître dès qu'un chemin invalide est donné en entrée)
     }
   });
 }

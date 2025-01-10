@@ -1,4 +1,5 @@
 const { parseCruFilesInDirectory } = require("../utils/cruUtils");
+const colorInfo = require("../utils/colorInfo");
 
 function readAllEdt(cli) {
     cli
@@ -14,7 +15,7 @@ function readAllEdt(cli) {
 
             logger.info(JSON.stringify(parser.parsedData, null, 2));
         } catch (error) {
-            logger.error(error.message);
+            logger.error(colorInfo(error.message, "red"));
         }
     });
 }
